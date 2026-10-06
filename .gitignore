@@ -1,0 +1,20 @@
+# Rust / Tauri
+src-tauri/target/
+target/
+**/*.rs.bk
+
+# 前端产物（复用 micro-web/apps/admin 构建产物）
+dist/
+node_modules/
+
+# 日志与本地环境
+*.log
+logs/
+.env
+.env.*
+!.env.example
+
+# IDE / 系统
+.idea/
+.vscode/
+.DS_Store
