@@ -1,0 +1,42 @@
+[package]
+name = "micro-desktop"
+version = "0.1.0"
+description = "运维 PC（Tauri 2，S9-05）：本地诊断 / 固件烧录 / 文件传输三模块；前端复用 micro-web/apps/admin 构建产物"
+edition = "2021"
+rust-version = "1.77"
+build = "build.rs"
+
+# S9-05 阶段验收：PC Windows 实机构建通过（Rust 工具链预装验证放最前，04 §3 用户侧动作之外的本仓交付）
+
+[lib]
+name = "micro_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-fs = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# diag 三通道：串口（JBD 帧）/ CAN 盒（SLCAN）/ BLE（btleplug，JBD over BLE）
+serialport = "4"
+btleplug = "0.11"
+# JBD 帧 CRC16-Modbus
+crc16 = "0.4"
+# flash：sha256 缓存 + XMODEM-1K 状态机
+sha2 = "0.10"
+hex = "0.4"
+# transfer：CSV / XLSX / zip 打包
+csv = "1"
+rust_xlsxwriter = { version = "0.79", features = ["zlib"] }
+zip = { version = "2", default-features = false, features = ["deflate"] }
+chrono = "0.4"
+tokio = { version = "1", features = ["time"] }
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1

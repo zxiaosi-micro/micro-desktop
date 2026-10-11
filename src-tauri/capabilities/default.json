@@ -1,0 +1,17 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "capabilities 白名单（02 §12.4）：core 默认 + 对话框 + 文件系统（scoped：仅下载/临时目录）；本地诊断/烧录经 invoke 自定义 command，不开放 shell/http 能力",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "dialog:default",
+    {
+      "identifier": "fs:default",
+      "allow": [
+        { "path": "$DOWNLOAD/**" },
+        { "path": "$TEMP/**" }
+      ]
+    }
+  ]
+}
