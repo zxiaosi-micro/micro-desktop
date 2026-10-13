@@ -164,6 +164,7 @@ pub fn list_serial_ports() -> Result<Vec<String>> {
         .collect())
 }
 
+/// 串口类型的人类可读名（非 USB 桥的兜底展示）。
 fn serial_name(p: &serialport::SerialPortType) -> String {
     match p {
         serialport::SerialPortType::BluetoothPort => "Bluetooth".into(),
@@ -217,8 +218,11 @@ pub fn diag_slcan_read(port: String, baud: u32, count: u32) -> Result<Vec<CanFra
 /// BLE 外设扫描结果。
 #[derive(Debug, Serialize)]
 pub struct BleDevice {
+    /// 广播名（JBD BMS 通常含 "JBD"/"BT-"）
     pub name: String,
+    /// 外设标识（connect 用）
     pub id: String,
+    /// 信号强度（dBm，可能缺失）
     pub rssi: Option<i16>,
 }
 

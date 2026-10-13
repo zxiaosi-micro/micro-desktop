@@ -25,7 +25,9 @@ pub struct ExportRequest {
 /// 导出结果。
 #[derive(Debug, Serialize)]
 pub struct ExportResult {
+    /// 落盘绝对路径（前端提示打开位置）
     pub path: String,
+    /// 导出行数（zip 打包时为条目数）
     pub rows: usize,
 }
 

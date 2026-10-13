@@ -28,12 +28,19 @@ const CRC_MODE: u8 = 0x43; // 'C'——接收方请求 CRC 模式
 /// 烧录进度快照（进度事件 + 断点续传文件共用）。
 #[derive(Debug, Clone, Serialize)]
 pub struct FlashProgress {
+    /// 设备 SN（审计与前端展示）
     pub sn: String,
+    /// 固件路径
     pub firmware: String,
+    /// 固件哈希（续传文件有效性校验键）
     pub firmware_sha256: String,
+    /// 固件总字节数
     pub bytes_total: u64,
+    /// 已确认字节数
     pub bytes_done: u64,
+    /// 已确认块号（续传起点）
     pub block_index: u32,
+    /// 是否已完成（完成态进度文件不可再续传）
     pub finished: bool,
 }
 
@@ -139,20 +146,24 @@ pub fn flash_xmodem_1k(
     Ok(progress)
 }
 
+/// 断点续传进度文件路径（{固件路径}.flash-progress，与固件同目录）。
 fn flash_progress_path(firmware: &str) -> PathBuf {
     PathBuf::from(format!("{firmware}.flash-progress"))
 }
 
+/// 进度落盘（每块确认后调用，断点续传的数据源）。
 fn persist_progress(path: &PathBuf, p: &FlashProgress) -> Result<()> {
     std::fs::write(path, serde_json::to_vec(p).map_err(|e| AppError(format!("序列化进度: {e}")))?)
         .map_err(|e| AppError(format!("写进度文件失败: {e}")))
 }
 
+/// 向前端发进度事件（event 通道 flash://progress，进度条数据源）。
 fn emit_progress(app: &tauri::AppHandle, p: &FlashProgress) {
     use tauri::Emitter;
     let _ = app.emit("flash://progress", p);
 }
 
+/// CRC16-Modbus（XMODEM 块校验）。
 fn crc16_modbus(data: &[u8]) -> u16 {
     use crc16::*;
     let mut state = State::MODBUS;
